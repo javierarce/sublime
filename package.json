@@ -1,0 +1,27 @@
+{
+  "name": "Sublime",
+  "description": "Diseña de la forma más sublime",
+  "version": "0.1.5",
+  "engines": {
+    "sketch": ">=49.0"
+  },
+  "skpm": {
+    "name": "sublime",
+    "manifest": "src/manifest.json",
+    "main": "sublime.sketchplugin",
+    "assets": [
+      "assets/**/*"
+    ],
+    "sketch-assets-file": "sketch-assets/icons.sketch"
+  },
+  "scripts": {
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
+    "start": "skpm-build --watch --run",
+    "postinstall": "npm run build && skpm-link"
+  },
+  "devDependencies": {
+    "@skpm/builder": "^0.7.0"
+  },
+  "author": "Javier Arce <javierarce@users.noreply.github.com>"
+}

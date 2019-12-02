@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Add	src/command.js	/^const onAdd = (change, path) => {$/;"	c
+Change	src/command.js	/^const onChange = (change, path) => {$/;"	c
+Default	src/command.js	/^const onDefault = (type) => {$/;"	c
+Delete	src/command.js	/^const onDelete = (change, path) => {$/;"	c
+LayerCount	src/command.js	/^const getLayerCount = () => {$/;"	c
+MESSAGES	src/command.js	/^const MESSAGES = {$/;"	c
+Message	src/command.js	/^const getMessage = (type, value) => {$/;"	c
+Message	src/my-action-listener.js	/^const getMessage = () => {$/;"	c
+Modules	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^\/******\/ 	var installedModules = {};$/;"	c
+WEBPACK_IMPORTED_MODULE_0__	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^\/* harmony import *\/ var sketch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(\/*! sketch *\/ "sketch");$/;"	c
+__skpm_run	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^function __skpm_run (key, context) {$/;"	f
+__webpack_require__	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^\/******\/ 	function __webpack_require__(moduleId) {$/;"	f
+getDefault	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^\/******\/ 			function getDefault() { return module['default']; } :$/;"	f
+getModuleExports	sublime.sketchplugin/Contents/Sketch/__my-command.js	/^\/******\/ 			function getModuleExports() { return module; };$/;"	f
+onDelete	src/listeners.js	/^export function onDelete(context) {$/;"	f
+onDelete	src/my-action-listener.js	/^export function onDelete(context) {$/;"	f
+onDocumentChanged	src/command.js	/^export function onDocumentChanged(context) {$/;"	f
+onLayersMoved	src/listeners.js	/^export function onLayersMoved(context) {$/;"	f
+onLayersMoved	src/my-action-listener.js	/^export function onLayersMoved(context) {$/;"	f
+onOvalShape	src/listeners.js	/^export function onOvalShape(context) {$/;"	f
+onRectangleShape	src/listeners.js	/^export function onRectangleShape(context) {$/;"	f
+onTextChanged	src/listeners.js	/^export function onTextChanged(context) {$/;"	f
+onTextChanged	src/my-action-listener.js	/^export function onTextChanged(context) {$/;"	f

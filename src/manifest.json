@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/BohemianCoding/SketchAPI/develop/docs/sketch-plugin-manifest-schema.json",
+    "icon": "icon.png",
+    "commands": [{
+      "script": "./command.js",
+      "handlers": {
+        "onDocumentChanged": "onDocumentChanged"
+      }
+    }, {
+      "name": "Sublime",
+      "description": "test",
+      "identifier": "sublime.my-command-identifier",
+      "script": "./command.js"
+    }],
+    "menu": {
+      "title": "sublime",
+      "items": [
+        "sublime.my-command-identifier"
+      ]
+    }
+}
