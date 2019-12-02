@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/BohemianCoding/SketchAPI/develop/docs/sketch-plugin-manifest-schema.json",
+  "icon": "icon.png",
+  "commands": [
+    {
+      "script": "__command.js",
+      "handlers": {
+        "onDocumentChanged": "onDocumentChanged"
+      }
+    },
+    {
+      "name": "Sublime",
+      "description": "test",
+      "identifier": "sublime.my-command-identifier",
+      "script": "__command.js"
+    }
+  ],
+  "menu": {
+    "title": "sublime",
+    "items": [
+      "sublime.my-command-identifier"
+    ]
+  },
+  "version": "0.1.5",
+  "description": "Diseña de la forma más sublime",
+  "name": "sublime",
+  "identifier": "sublime",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
+  "author": "Javier Arce",
+  "authorEmail": "javierarce@users.noreply.github.com"
+}
