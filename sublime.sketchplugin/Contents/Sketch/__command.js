@@ -106,27 +106,40 @@ __webpack_require__.r(__webpack_exports__);
 var sketch = __webpack_require__(/*! sketch */ "sketch");
 
 var MESSAGES = {
-  general: ['No es lo suficientemente sublime', 'Así no', 'Persevera', 'Todavía es poco sublime'],
-  delete: ['delete 1', 'delete 2'],
-  color: ['Color 1', 'Color 2'],
-  points: ['points 1', 'points 2'],
-  opacity: ['opacity 1', 'opacity 2']
+  general: {
+    0: ['No es lo suficientemente sublime', 'Así no', 'Persevera', 'Todavía es poco sublime'],
+    1: []
+  },
+  delete: {
+    0: ['delete 1', 'delete 2'],
+    1: ['delete 1', 'delete 2']
+  },
+  color: {
+    0: ['Ese color no es sublime.', '{{color}} no es sublime.', '¡Qué color tan poco sublime!', '{{color}} no es lo suficientemente sublime.'],
+    1: []
+  },
+  points: {
+    0: ['points 1', 'points 2'],
+    1: []
+  },
+  opacity: {
+    0: ['opacity 1', 'opacity 2'],
+    1: ['opacity 1', 'opacity 2']
+  }
 };
 
 var getLayerCount = function getLayerCount() {
   return selectedPage.sketchObject.children().length - 1;
 };
 
-var getMessage = function getMessage(type, value) {
-  var messages = [];
-
-  if (!type) {
-    messages = MESSAGES['general'];
-  } else {
-    messages = MESSAGES[type];
-  }
-
-  return messages[Math.floor(Math.random() * messages.length)];
+var getMessage = function getMessage() {
+  var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'general';
+  var mode = arguments.length > 1 ? arguments[1] : undefined;
+  var value = arguments.length > 2 ? arguments[2] : undefined;
+  var messages = MESSAGES[type][mode];
+  var regexp = new RegExp("{{W*".concat(type, ":?.*?}}"), 'g');
+  var message = messages[Math.floor(Math.random() * messages.length)];
+  return value ? message.replace(regexp, value) : message;
 };
 
 var onDefault = function onDefault(type) {
@@ -137,26 +150,25 @@ var document = sketch.getSelectedDocument();
 var selectedPage = document.selectedPage;
 
 var onChange = function onChange(change, path) {
+  var mode = 0;
   var type = undefined;
-  var value = undefined;
+  var value = eval("document.".concat(path));
 
   if (path.includes('color')) {
-    value = eval("document.".concat(path));
     type = 'color';
   } else if (path.includes('opacity')) {
-    value = eval("document.".concat(path)).toFixed(2);
+    value = value.toFixed(2);
     type = 'opacity';
   } else if (path.includes('points')) {
     type = 'radius';
-    var points = eval("document.".concat(path));
-    value = points.map(function (p) {
+    value = value.map(function (p) {
       return p.cornerRadius;
     }).reduce(function (a, i) {
       return a + i;
     });
   }
 
-  var message = getMessage(type, value);
+  var message = getMessage(type, mode, value);
   sketch.UI.message(message);
 };
 
