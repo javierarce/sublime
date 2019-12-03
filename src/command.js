@@ -1,39 +1,92 @@
-const sketch = require("sketch")
+let Settings = require('sketch/settings')
+const sketch = require('sketch')
 
 const MESSAGES = {
+  change: {
+    0: [
+      'Así no es lo suficientemente sublime',
+      'Antes era más sublime',
+      'Aún podría ser más sublime',
+      'Mmm… ese cambio es poco sublime'
+    ]
+  },
+  name: {
+    0: [
+      'Este texto no es sublime',
+      'Este texto podría ser más sublime',
+      '¡Qué poco sublime!'
+    ]
+  },
+  insert: {
+    0: [
+      '¡Este diseño no es sublime!',
+      'No deberías haber añadido esto',
+      'Esta es una decisión muy poco sublime',
+      'Te estás alejando de lo sublime',
+      'Esto está lejos de ser sublime',
+      'Tu diseño es cada vez menos sublime'
+    ]
+  },
   general: { 
     0: [
-      'No es lo suficientemente sublime',
       'Así no',
-      'Persevera',
+      '¡Mal!',
+      'No es lo suficientemente sublime',
+      'Bah, ¡no es lo suficientemente sublime!',
+      'Persevera, puede ser más sublime',
+      'Te sigues alejando de lo sublime',
+      'Te alejas de lo sublime',
+      'Este diseño no es sublime',
+      'Mal, este diseño no es sublime',
       'Todavía es poco sublime'
-    ],
-    1: [
     ]
   },
   delete: { 
-    0: ['delete 1', 'delete 2'],
-    1: ['delete 1', 'delete 2']
+    0: [
+      'Aún no es sublime',
+      'Todavía es poco sublime',
+      'Buen intento, pero aún no es sublime'
+    ],
+    1: [
+      '¡Lo has logrado! Tu diseño es por fin sublime.',
+      '¡Lo conseguiste! Tu diseño es por fin sublime.',
+      '¡Felicidades! Tu diseño es por fin sublime.',
+    ]
   },
   color: {
     0: [
-    'Ese color no es sublime.',
-    '{{color}} no es sublime.',
-    '¡Qué color tan poco sublime!',
-    '{{color}} no es lo suficientemente sublime.'
-  ], 
-    1: []
+      'Ese color no es sublime.',
+      '{{color}} no es sublime.',
+      '¡Qué color tan poco sublime!',
+      '{{color}} no es lo suficientemente sublime.'
+    ], 
+    1: [
+      'Sigue así',
+      'Mejor'
+    ]
   },
   points: {
     0: [
-    'points 1',
-    'points 2',
-  ], 
-    1: []
+      'No es lo suficientemente sublime',
+    ], 
+    1: [
+      'Mejor',
+      'Sigue así'
+    ]
   },
   opacity: { 
-    0: ['opacity 1', 'opacity 2'],
-    1: ['opacity 1', 'opacity 2']
+    0: [
+      'Todo el mundo sabe que {{opacity}} de opacidad no es sublime',
+      'Demasiado opaco para ser sublime'
+    ],
+    1: [
+      'Ahora es sublime',
+      'Mucho más sublime así',
+      'Bien hecho',
+      'Vas por el buen camino',
+      'Kant estaría orgulloso de ti',
+      'Mejor'
+    ]
   },
 }
 
@@ -50,7 +103,8 @@ const getMessage = (type = 'general', mode, value) => {
 }
 
 const onDefault = (type) => {
-  sketch.UI.message(`⚠️ Unexpected change type ${type}`)
+  let message = getMessage('general', 0)
+  sketch.UI.message(message)
 }
 
 const document = sketch.getSelectedDocument()
@@ -61,14 +115,29 @@ const onChange = (change, path) => {
   let type = undefined
   let value = eval(`document.${path}`)
 
-  if (path.includes('color')) {
+  if (change && change.propertyName && change.propertyName() == 'frame') {
+    type = 'change'
+    mode = 0
+  } else if (path.includes('insert')) {
+    type = 'insert'
+    mode = 0
+  } else if (path.includes('name')) {
+    type = 'name'
+    mode = 0
+  } else if (path.includes('color')) {
     type = 'color'
+    mode = value.includes('ffffff') ?  1 : 0
   } else if (path.includes('opacity')) {
     value = value.toFixed(2)
     type = 'opacity'
+
+    if (value < 0.03) {
+      mode = 1
+    }
   } else if (path.includes('points')) {
-    type = 'radius'
+    type = 'points'
     value = value.map(p => p.cornerRadius).reduce((a,i) => a + i)
+    mode = value >= (66 * 4) -1 ? 1 : 0
   }
 
   let message = getMessage(type, mode, value)
@@ -80,21 +149,29 @@ const onDelete = (change, path) => {
     return
   }
 
-  let message = getMessage('delete', getLayerCount())
+  let mode = 0
+
+  if (getLayerCount() <= 0) {
+    mode = 1
+  }
+
+  let message = getMessage('delete', mode, getLayerCount())
   sketch.UI.message(message)
 }
 
 const onAdd = (change, path) => {
-  if (change.isMove()) {
-    let from = change.associatedChange().fullPath()
-    sketch.UI.message( `Object moved from ${from} to ${path}`)
-  } else {
-    sketch.UI.message(`New object inserted at ${getLayerCount()}`)
-  }
+  let  message = getMessage('insert', 0)
+  sketch.UI.message(message)
 }
 
 export function onDocumentChanged(context) {
   let changes = context.actionContext
+
+  let isActivated = Settings.sessionVariable('sublime')
+
+  if (!isActivated) {
+    return
+  }
 
   for (let i = 0; i < changes.length; i++) {
     let change = changes[i]
@@ -110,17 +187,12 @@ export function onDocumentChanged(context) {
   }
 }
 
-export default function () {
-  const document = sketch.getSelectedDocument()
-  const selectedLayers = document.selectedLayers
-  const selectedCount = selectedLayers.length
-  const selectedPage = document.selectedPage
+export function on(context) {
+  Settings.setSessionVariable('sublime', true)
+  sketch.UI.message('Adelante, diseña')
+}
 
-  let children = selectedPage.sketchObject.children()
-
-  console.log(children)
-
-  if (children && children.length) {
-    sketch.UI.message(children.length)
-  }
+export function off(context) {
+  Settings.setSessionVariable('sublime', false)
+  sketch.UI.message('Vale, ya me callo')
 }

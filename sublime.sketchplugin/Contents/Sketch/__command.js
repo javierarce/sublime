@@ -97,34 +97,46 @@ var exports =
 /*!************************!*\
   !*** ./src/command.js ***!
   \************************/
-/*! exports provided: onDocumentChanged, default */
+/*! exports provided: onDocumentChanged, on, off */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "onDocumentChanged", function() { return onDocumentChanged; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "on", function() { return on; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "off", function() { return off; });
+var Settings = __webpack_require__(/*! sketch/settings */ "sketch/settings");
+
 var sketch = __webpack_require__(/*! sketch */ "sketch");
 
 var MESSAGES = {
+  change: {
+    0: ['Así no es lo suficientemente sublime', 'Antes era más sublime', 'Aún podría ser más sublime', 'Mmm… ese cambio es poco sublime']
+  },
+  name: {
+    0: ['Este texto no es sublime', 'Este texto podría ser más sublime', '¡Qué poco sublime!']
+  },
+  insert: {
+    0: ['¡Este diseño no es sublime!', 'No deberías haber añadido esto', 'Esta es una decisión muy poco sublime', 'Te estás alejando de lo sublime', 'Esto está lejos de ser sublime', 'Tu diseño es cada vez menos sublime']
+  },
   general: {
-    0: ['No es lo suficientemente sublime', 'Así no', 'Persevera', 'Todavía es poco sublime'],
-    1: []
+    0: ['Así no', '¡Mal!', 'No es lo suficientemente sublime', 'Bah, ¡no es lo suficientemente sublime!', 'Persevera, puede ser más sublime', 'Te sigues alejando de lo sublime', 'Te alejas de lo sublime', 'Este diseño no es sublime', 'Mal, este diseño no es sublime', 'Todavía es poco sublime']
   },
   delete: {
-    0: ['delete 1', 'delete 2'],
-    1: ['delete 1', 'delete 2']
+    0: ['Aún no es sublime', 'Todavía es poco sublime', 'Buen intento, pero aún no es sublime'],
+    1: ['¡Lo has logrado! Tu diseño es por fin sublime.', '¡Lo conseguiste! Tu diseño es por fin sublime.', '¡Felicidades! Tu diseño es por fin sublime.']
   },
   color: {
     0: ['Ese color no es sublime.', '{{color}} no es sublime.', '¡Qué color tan poco sublime!', '{{color}} no es lo suficientemente sublime.'],
-    1: []
+    1: ['Sigue así', 'Mejor']
   },
   points: {
-    0: ['points 1', 'points 2'],
-    1: []
+    0: ['No es lo suficientemente sublime'],
+    1: ['Mejor', 'Sigue así']
   },
   opacity: {
-    0: ['opacity 1', 'opacity 2'],
-    1: ['opacity 1', 'opacity 2']
+    0: ['Todo el mundo sabe que {{opacity}} de opacidad no es sublime', 'Demasiado opaco para ser sublime'],
+    1: ['Ahora es sublime', 'Mucho más sublime así', 'Bien hecho', 'Vas por el buen camino', 'Kant estaría orgulloso de ti', 'Mejor']
   }
 };
 
@@ -143,7 +155,8 @@ var getMessage = function getMessage() {
 };
 
 var onDefault = function onDefault(type) {
-  sketch.UI.message("\u26A0\uFE0F Unexpected change type ".concat(type));
+  var message = getMessage('general', 0);
+  sketch.UI.message(message);
 };
 
 var document = sketch.getSelectedDocument();
@@ -154,18 +167,33 @@ var onChange = function onChange(change, path) {
   var type = undefined;
   var value = eval("document.".concat(path));
 
-  if (path.includes('color')) {
+  if (change && change.propertyName && change.propertyName() == 'frame') {
+    type = 'change';
+    mode = 0;
+  } else if (path.includes('insert')) {
+    type = 'insert';
+    mode = 0;
+  } else if (path.includes('name')) {
+    type = 'name';
+    mode = 0;
+  } else if (path.includes('color')) {
     type = 'color';
+    mode = value.includes('ffffff') ? 1 : 0;
   } else if (path.includes('opacity')) {
     value = value.toFixed(2);
     type = 'opacity';
+
+    if (value < 0.03) {
+      mode = 1;
+    }
   } else if (path.includes('points')) {
-    type = 'radius';
+    type = 'points';
     value = value.map(function (p) {
       return p.cornerRadius;
     }).reduce(function (a, i) {
       return a + i;
     });
+    mode = value >= 66 * 4 - 1 ? 1 : 0;
   }
 
   var message = getMessage(type, mode, value);
@@ -177,21 +205,28 @@ var onDelete = function onDelete(change, path) {
     return;
   }
 
-  var message = getMessage('delete', getLayerCount());
+  var mode = 0;
+
+  if (getLayerCount() <= 0) {
+    mode = 1;
+  }
+
+  var message = getMessage('delete', mode, getLayerCount());
   sketch.UI.message(message);
 };
 
 var onAdd = function onAdd(change, path) {
-  if (change.isMove()) {
-    var from = change.associatedChange().fullPath();
-    sketch.UI.message("Object moved from ".concat(from, " to ").concat(path));
-  } else {
-    sketch.UI.message("New object inserted at ".concat(getLayerCount()));
-  }
+  var message = getMessage('insert', 0);
+  sketch.UI.message(message);
 };
 
 function onDocumentChanged(context) {
   var changes = context.actionContext;
+  var isActivated = Settings.sessionVariable('sublime');
+
+  if (!isActivated) {
+    return;
+  }
 
   for (var i = 0; i < changes.length; i++) {
     var change = changes[i];
@@ -216,18 +251,14 @@ function onDocumentChanged(context) {
     }
   }
 }
-/* harmony default export */ __webpack_exports__["default"] = (function () {
-  var document = sketch.getSelectedDocument();
-  var selectedLayers = document.selectedLayers;
-  var selectedCount = selectedLayers.length;
-  var selectedPage = document.selectedPage;
-  var children = selectedPage.sketchObject.children();
-  console.log(children);
-
-  if (children && children.length) {
-    sketch.UI.message(children.length);
-  }
-});
+function on(context) {
+  Settings.setSessionVariable('sublime', true);
+  sketch.UI.message('Adelante, diseña');
+}
+function off(context) {
+  Settings.setSessionVariable('sublime', false);
+  sketch.UI.message('Vale, ya me callo');
+}
 
 /***/ }),
 
@@ -239,6 +270,17 @@ function onDocumentChanged(context) {
 /***/ (function(module, exports) {
 
 module.exports = require("sketch");
+
+/***/ }),
+
+/***/ "sketch/settings":
+/*!**********************************!*\
+  !*** external "sketch/settings" ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("sketch/settings");
 
 /***/ })
 
@@ -259,6 +301,8 @@ module.exports = require("sketch");
   }
 }
 globalThis['onDocumentChanged'] = __skpm_run.bind(this, 'onDocumentChanged');
-globalThis['onRun'] = __skpm_run.bind(this, 'default')
+globalThis['onRun'] = __skpm_run.bind(this, 'default');
+globalThis['on'] = __skpm_run.bind(this, 'on');
+globalThis['off'] = __skpm_run.bind(this, 'off')
 
 //# sourceMappingURL=__command.js.map

@@ -9,16 +9,25 @@
       }
     },
     {
-      "name": "Sublime",
-      "description": "test",
-      "identifier": "sublime.my-command-identifier",
+      "name": "Activar",
+      "description": "On",
+      "identifier": "sublime.on",
+      "handler": "on",
+      "script": "__command.js"
+    },
+    {
+      "name": "Desactivar",
+      "description": "Off",
+      "identifier": "sublime.off",
+      "handler": "off",
       "script": "__command.js"
     }
   ],
   "menu": {
-    "title": "sublime",
+    "title": "Sublime",
     "items": [
-      "sublime.my-command-identifier"
+      "sublime.on",
+      "sublime.off"
     ]
   },
   "version": "0.1.5",
