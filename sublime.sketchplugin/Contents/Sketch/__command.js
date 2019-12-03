@@ -117,10 +117,10 @@ var MESSAGES = {
     0: ['Este texto no es sublime', 'Este texto podría ser más sublime', '¡Qué poco sublime!']
   },
   insert: {
-    0: ['¡Este diseño no es sublime!', 'No deberías haber añadido esto', 'Esta es una decisión muy poco sublime', 'Te estás alejando de lo sublime', 'Esto está lejos de ser sublime', 'Tu diseño es cada vez menos sublime']
+    0: ['¡Este diseño no es sublime!', 'No deberías haber añadido esto', 'Esta es una decisión muy poco sublime', 'Te estás alejando de lo sublime', 'Está lejos de ser sublime']
   },
   general: {
-    0: ['Así no', '¡Mal!', 'No es lo suficientemente sublime', 'Bah, ¡no es lo suficientemente sublime!', 'Persevera, puede ser más sublime', 'Te sigues alejando de lo sublime', 'Te alejas de lo sublime', 'Este diseño no es sublime', 'Mal, este diseño no es sublime', 'Todavía es poco sublime']
+    0: ['Así no', '¡Mal!', 'No es lo suficientemente sublime', 'Bah, ¡no es lo suficientemente sublime!', 'Persevera, puede ser más sublime', 'Te sigues alejando de lo sublime', 'Te alejas de lo sublime', 'Este diseño no es sublime', 'Mal, este diseño no es sublime', 'Maaaal', 'Todavía es poco sublime']
   },
   delete: {
     0: ['Aún no es sublime', 'Todavía es poco sublime', 'Buen intento, pero aún no es sublime'],
@@ -135,7 +135,7 @@ var MESSAGES = {
     1: ['Mejor', 'Sigue así']
   },
   opacity: {
-    0: ['Todo el mundo sabe que {{opacity}} de opacidad no es sublime', 'Demasiado opaco para ser sublime'],
+    0: ['Todo el mundo sabe que {{opacity}}% de opacidad no es sublime', 'Demasiado opaco para ser sublime'],
     1: ['Ahora es sublime', 'Mucho más sublime así', 'Bien hecho', 'Vas por el buen camino', 'Kant estaría orgulloso de ti', 'Mejor']
   }
 };
@@ -180,10 +180,10 @@ var onChange = function onChange(change, path) {
     type = 'color';
     mode = value.includes('ffffff') ? 1 : 0;
   } else if (path.includes('opacity')) {
-    value = value.toFixed(2);
+    value = Math.round(+value * 100);
     type = 'opacity';
 
-    if (value < 0.03) {
+    if (value < 1) {
       mode = 1;
     }
   } else if (path.includes('points')) {

@@ -23,8 +23,7 @@ const MESSAGES = {
       'No deberías haber añadido esto',
       'Esta es una decisión muy poco sublime',
       'Te estás alejando de lo sublime',
-      'Esto está lejos de ser sublime',
-      'Tu diseño es cada vez menos sublime'
+      'Está lejos de ser sublime'
     ]
   },
   general: { 
@@ -38,6 +37,7 @@ const MESSAGES = {
       'Te alejas de lo sublime',
       'Este diseño no es sublime',
       'Mal, este diseño no es sublime',
+      'Maaaal',
       'Todavía es poco sublime'
     ]
   },
@@ -76,7 +76,7 @@ const MESSAGES = {
   },
   opacity: { 
     0: [
-      'Todo el mundo sabe que {{opacity}} de opacidad no es sublime',
+      'Todo el mundo sabe que {{opacity}}% de opacidad no es sublime',
       'Demasiado opaco para ser sublime'
     ],
     1: [
@@ -128,10 +128,10 @@ const onChange = (change, path) => {
     type = 'color'
     mode = value.includes('ffffff') ?  1 : 0
   } else if (path.includes('opacity')) {
-    value = value.toFixed(2)
+    value = Math.round(+value * 100)
     type = 'opacity'
 
-    if (value < 0.03) {
+    if (value < 1) {
       mode = 1
     }
   } else if (path.includes('points')) {
