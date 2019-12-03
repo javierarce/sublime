@@ -30,8 +30,8 @@
       "sublime.off"
     ]
   },
-  "version": "0.1.5",
-  "description": "Diseña de la forma más sublime",
+  "version": "0.1.0",
+  "description": "Lo sublime",
   "name": "sublime",
   "identifier": "sublime",
   "disableCocoaScriptPreprocessor": true,
