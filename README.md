@@ -1,5 +1,4 @@
 # Sublime.sketch
 
 
-Este plugin de sketch
-
+Plugin de Sketch para hacer diseños sublimes. 
